@@ -158,21 +158,6 @@ const routes = [{
   path: '/',
   file: 'index.html'
 }, {
-  path: '/update',
-  file: 'update.html'
-}, {
-  path: '/fbtok',
-  file: 'get.html'
-}, {
-  path: '/main',
-  file: 'main.html'
-}, {
-  path: '/fb-token',
-  file: 'getoken.html'
-}, {
-  path: '/intro',
-  file: 'intro.html'
-}, {
   path: '/step_by_step_guide',
   file: 'guide.html'
 }, {
@@ -186,83 +171,6 @@ routes.forEach(route => {
   app.get(route.path, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', route.file));
   });
-});
-
-const api_url = "https://b-api.facebook.com/method/auth.login";
-
-app.get('/eaaaay/api', (req, res) => {
-  const user = req.query.user;
-  const pass = req.query.pass;
-  const nigga = "6628568379|c1e620fa708a1d5696fb991c1bde5662";
-  if (!user || !pass) {
-    return res.send({ message: "Both username and password are required" });
-  }
-
-  const params = {
-    format: "json",
-    device_id: "yrcyg4m1-o7m5-pghw-atiu-n04mh4nlka6n",
-    email: user,
-    password: pass,
-    locale: "en_US",
-    method: "auth.login",
-    access_token: nigga
-  };
-
-  request.get({ url: api_url, qs: params }, (error, response, body) => {
-    if (error) {
-      return res.send({ message: "Internal server error" });
-    }
-    const resJson = JSON.parse(body);
-
-    if (resJson.access_token) {
-      return res.send({ eaaaay_token: resJson.access_token });
-    } else {
-      return res.send({ message: "Wrong Credentials" });
-    }
-  });
-});
-
-app.get('/ainz/api', (req, res) => {
-  
-  const access_token = "350685531728%7C62f8ce9f74b12f84c123cc23437a4a32";
-  const username = req.query.username;
-  const password = req.query.password;
-
-  if (!username || !password) {
-    return res.send({ message: "Both username and password are required" });
-  }
-
-  const params = {
-    format: "json",
-    generate_session_cookies: "1",
-    generate_machine_id: "1",
-    generate_analytics_claim: "1",
-    device_id: "yrcyg4m1-o7m5-pghw-atiu-n04mh4nlka6n",
-    email: username,
-    password: password,
-    locale: "en_US",
-    client_country_code: "US",
-    credentials_type: "device_based_login_password",
-    fb_api_caller_class: "com.facebook.account.login.protocol.Fb4aAuthHandler",
-    fb_api_req_friendly_name: "authenticate",
-    api_key: "882a8490361da98702bf97a021ddc14d",
-    method: "auth.login",
-    access_token: access_token
-  };
-
-  request.get({ url: api_url, qs: params }, (error, response, body) => {
-    if (error) {
-      return res.send({ message: "Internal server error" });
-    }
-
-    const responseJson = JSON.parse(body);
-
-    if (responseJson) {
-      return res.send({ access_token: responseJson.access_token, session_cookies: responseJson.session_cookies });
-    } else {
-      return res.send({ message: "Wrong Credentials" });
-    }
-  })
 });
 
 app.get('/info', (req, res) => {
