@@ -1,5 +1,5 @@
 const fs = require('fs');
-const pathFile = './txt/auto.txt';
+const pathFile = 'auto.txt';
 
 module.exports.config = {
 name: "autodownfb",
