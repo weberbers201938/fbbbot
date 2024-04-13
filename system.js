@@ -644,7 +644,7 @@ async function updateThread(id) {
 const Experience = {
   async levelInfo(id) {
     const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-    const data = database[1].Users.find(user => user.id === id);
+    const data = database[1]?.Users.find(user => user.id === id);
     if (!data) {
       return;
     }
@@ -652,7 +652,7 @@ const Experience = {
   },
   async levelUp(id) {
     const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-    const data = database[1].Users.find(user => user.id === id);
+    const data = database[1]?.Users.find(user => user.id === id);
     if (!data) {
       return;
     }
@@ -665,7 +665,7 @@ const Currencies = {
   async update(id, money) {
     try {
       const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-      const data = database[1].Users.find(user => user.id === id);
+      const data = database[1]?.Users.find(user => user.id === id);
       if (!data || !money) {
         return;
       }
@@ -679,7 +679,7 @@ const Currencies = {
   async increaseMoney(id, money) {
     try {
       const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-      const data = database[1].Users.find(user => user.id === id);
+      const data = database[1]?.Users.find(user => user.id === id);
       if (!data) {
         return;
       }
@@ -695,7 +695,7 @@ const Currencies = {
   async decreaseMoney(id, money) {
     try {
       const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-      const data = database[1].Users.find(user => user.id === id);
+      const data = database[1]?.Users.find(user => user.id === id);
       if (!data) {
         return;
       }
@@ -711,7 +711,7 @@ const Currencies = {
   async getData(id) {
     try {
       const database = JSON.parse(fs.readFileSync('./data/database.json', 'utf8'));
-      const data = database[1].Users.find(user => user.id === id);
+      const data = database[1]?.Users.find(user => user.id === id);
       if (!data) {
         return;
       }
