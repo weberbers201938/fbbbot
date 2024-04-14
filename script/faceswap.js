@@ -1,6 +1,7 @@
 const path = require('path');
 const { Prodia } = require("prodia.js");
-
+const axios = require('axios');
+const fs = require('fs-extra');
 module.exports.config = {
   name: "faceswap",
   version: "1.0.0",
@@ -29,7 +30,7 @@ module.exports.run = async ({ api, event }) => {
     const picPath = '/cache/swapface.jpg'
     const paths = path.join(__dirname, picPath);
     
-    const img = (swappedImage, { responseType: "arraybuffer" }).data;
+    const img = (await axios.get(swappedImage, { responseType: "arraybuffer" }).data;
     
     fs.writeFileSync(paths, Buffer.from(img, "utf-8"));  
     
@@ -39,6 +40,6 @@ module.exports.run = async ({ api, event }) => {
       }, threadID, () => fs.unlinkSync(paths), event.threadID, event.messageID);
   } catch(error) {
     api.sendMessage(error, event.threadID, event.messageID);
-    consolr.error(error)
+    console.error(error)
   }
 }
