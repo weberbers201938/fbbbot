@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const axios = require("axios");
 
-const pathFile = 'auto.txt';
+let isEnable = true; // Activate the functionality
 
 module.exports.config = {
   name: "autodowntiktok",
@@ -13,12 +13,7 @@ module.exports.handleEvent = async ({ api, event }) => {
     const regEx_tiktok = /https:\/\/(www\.|vt\.)?tiktok\.com\//;
     const link = event?.body;
     
-    if (!fs.existsSync(pathFile))
-      fs.writeFileSync(pathFile, 'false');
-      
-    const isEnable = fs.readFileSync(pathFile, 'utf-8').trim();
-    
-    if (isEnable === 'true' && regEx_tiktok.test(link)) {
+    if (isEnable && regEx_tiktok.test(link)) {
       const response = await axios.post(`https://www.tikwm.com/api/`, { url: link });
       const data = response.data.data;
       
