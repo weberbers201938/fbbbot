@@ -1,3 +1,7 @@
+const { Prodia } = require("prodia.js");
+
+const prodia = Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
+
 module.exports.config = {
   name: "faceswap",
   version: "1.0.0",
@@ -12,10 +16,10 @@ module.exports.config = {
 
 module.exports.run = async ({ api, event }) => {
   try {
+    const path = require('path');
+    const axios = require('axios');
+    const fs = require('fs-extra');
     
-    const path = require('path'), { Prodia } = require("prodia.js"), axios = require('axios'), fs = require('fs-extra'), prodia = new Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
-    
-    let url, url1;
     if (event.type === "message_reply") {
       if (event.messageReply.attachments.length === 0) return api.sendMessage("💢 No image found.", event.threadID, event.messageID);
       
@@ -23,18 +27,28 @@ module.exports.run = async ({ api, event }) => {
 
       if (event.messageReply.attachments.length > 2) return api.sendMessage("💢 Only 2 images can be converted.", event.threadID, event.messageID);
 
-      const url = event.messageReply.attachments[0].url;
-      const url1 = event.messageReply.attachments[1].url;
+      const sourceUrl = event.messageReply.attachments[0].url;
+      const targetUrl = event.messageReply.attachments[1].url;
 
-      const generate = await prodia.faceSwap({
-        sourceUrl: encodeURI(url),
-        targetUrl: encodeURI(url1),
-      });
+      const input = async ({ sourceUrl, targetUrl }) => {
+        try {
+          const result = await prodia.faceSwap({
+            sourceUrl,
+            targetUrl,
+          });
+          
+          const finalResult = await prodia.wait(result);
+          return finalResult;
+        } catch (error) {
+          console.error("Error:", error);
+          throw error;
+        }
+      };
 
-      const job = await prodia.getJob(generate.job);
+      const generatedImage = await input({ sourceUrl, targetUrl });
 
-      if (job.status === "succeeded") {
-        const img = (await axios.get(job.imageUrl, { responseType: "arraybuffer" })).data;
+      if (generatedImage.status === "succeeded") {
+        const img = (await axios.get(generatedImage.imageUrl, { responseType: "arraybuffer" })).data;
         const picPath = '/cache/swapface.png';
         const paths = path.join(__dirname, picPath);
         
