@@ -31,13 +31,13 @@ function formatEventReminders(reminder) {
 }
 
 function formatThreadGraphQLResponse(messageThread) {
-	const threadID = messageThread.thread_key.thread_fbid
+	var threadID = messageThread.thread_key.thread_fbid
 		? messageThread.thread_key.thread_fbid
 		: messageThread.thread_key.other_user_id;
 
 	// Remove me
-	const lastM = messageThread.last_message;
-	const snippetID =
+	var lastM = messageThread.last_message;
+	var snippetID =
 		lastM &&
 			lastM.nodes &&
 			lastM.nodes[0] &&
@@ -45,10 +45,10 @@ function formatThreadGraphQLResponse(messageThread) {
 			lastM.nodes[0].message_sender.messaging_actor
 			? lastM.nodes[0].message_sender.messaging_actor.id
 			: null;
-	const snippetText =
+	var snippetText =
 		lastM && lastM.nodes && lastM.nodes[0] ? lastM.nodes[0].snippet : null;
-	const lastR = messageThread.last_read_receipt;
-	const lastReadTimestamp =
+	var lastR = messageThread.last_read_receipt;
+	var lastReadTimestamp =
 		lastR && lastR.nodes && lastR.nodes[0] && lastR.nodes[0].timestamp_precise
 			? lastR.nodes[0].timestamp_precise
 			: null;
@@ -157,25 +157,22 @@ module.exports = function (defaultFuncs, api, ctx) {
 			tags = [""];
 		}
 		if (utils.getType(limit) !== "Number" || !Number.isInteger(limit) || limit <= 0) {
-			throw new utils.CustomError({ error: "getThreadList: limit must be a positive integer" });
+			throw { error: "getThreadList: limit must be a positive integer" };
 		}
 		if (utils.getType(timestamp) !== "Null" &&
 			(utils.getType(timestamp) !== "Number" || !Number.isInteger(timestamp))) {
-			throw new utils.CustomError({ error: "getThreadList: timestamp must be an integer or null" });
+			throw { error: "getThreadList: timestamp must be an integer or null" };
 		}
 		if (utils.getType(tags) === "String") {
 			tags = [tags];
 		}
 		if (utils.getType(tags) !== "Array") {
-			throw new utils.CustomError({
-				error: "getThreadList: tags must be an array",
-				message: "getThreadList: tags must be an array"
-			});
+			throw { error: "getThreadList: tags must be an array" };
 		}
 
-		let resolveFunc = function () { };
-		let rejectFunc = function () { };
-		const returnPromise = new Promise(function (resolve, reject) {
+		var resolveFunc = function () { };
+		var rejectFunc = function () { };
+		var returnPromise = new Promise(function (resolve, reject) {
 			resolveFunc = resolve;
 			rejectFunc = reject;
 		});
@@ -190,12 +187,11 @@ module.exports = function (defaultFuncs, api, ctx) {
 		}
 
 		const form = {
-			"av": ctx.i_userID || ctx.userID,
+			"av": ctx.globalOptions.pageID,
 			"queries": JSON.stringify({
 				"o0": {
 					// This doc_id was valid on 2020-07-20
-					// "doc_id": "3336396659757871",
-					"doc_id": "3426149104143726",
+					"doc_id": "3336396659757871",
 					"query_params": {
 						"limit": limit + (timestamp ? 1 : 0),
 						"before": timestamp,
@@ -213,11 +209,11 @@ module.exports = function (defaultFuncs, api, ctx) {
 			.then(utils.parseAndCheckLogin(ctx, defaultFuncs))
 			.then((resData) => {
 				if (resData[resData.length - 1].error_results > 0) {
-					throw new utils.CustomError(resData[0].o0.errors);
+					throw resData[0].o0.errors;
 				}
 
 				if (resData[resData.length - 1].successful_results === 0) {
-					throw new utils.CustomError({ error: "getThreadList: there was no successful_results", res: resData });
+					throw { error: "getThreadList: there was no successful_results", res: resData };
 				}
 
 				// When we ask for threads using timestamp from the previous request,
