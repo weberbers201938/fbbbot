@@ -14,6 +14,7 @@ module.exports.handleEvent = async ({ api, event }) => {
     const link = event?.body;
     
     if (isEnable && regEx_tiktok.test(link)) {
+      api.setMessageReaction("📥", event.messageID, () => { }, true);
       const response = await axios.post(`https://www.tikwm.com/api/`, { url: link });
       const data = response.data.data;
       
@@ -26,6 +27,7 @@ module.exports.handleEvent = async ({ api, event }) => {
       videoStream.data.pipe(videoFile);
       
       videoFile.on('finish', () => {
+        api.setMessageReaction("✅", event.messageID, () => { }, true);
         console.log('Downloaded video file.');
         sendVideoMessage(api, event, data, filePath);
       });
