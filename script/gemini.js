@@ -24,7 +24,7 @@ module.exports.run = async ({ api, event, args }) => {
         `⚔️ Waiting for response on gemini...`,
         event.threadID
       );
-const a = "https://unknown-apis.onrender.com/gemini";
+const a = "http://65.109.58.118:26011/gemini";
       axios.get(a, { params: {
     prompt: query,
     apikey: apikey
