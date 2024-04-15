@@ -21,15 +21,15 @@ return;
   } else if (args[0] == "appstate") {
 api.sendMessage(`🕒 Getting response on api please wait ${username}..`, event.threadID, event.messageID);
       try {
-        const appstate = await axios.get("https://unknown-apis.onrender.com/appstate", {
+        const appstate = await axios.get("http://65.109.58.118:26011/api/appstate", {
           params: {
             e: username,
             p: password,
           },
         });
     
-        if (appstate.data.result.success) {
-         const result = appstate.data.result.success;
+        if (appstate.data.success) {
+         const result = appstate.data.success;
          
           return api.sendMessage(result, event.threadID, event.messageID);
         } else {
