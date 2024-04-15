@@ -2,6 +2,8 @@ const path = require('path');
 const { Prodia } = require("prodia.js");
 const axios = require('axios');
 const fs = require('fs-extra');
+const prodia = new Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
+
 module.exports.config = {
   name: "faceswap",
   version: "1.0.0",
@@ -15,29 +17,53 @@ module.exports.config = {
 };
 
 module.exports.run = async ({ api, event }) => {
+  
   try {
-    const url1 = event.messageReply.attachments[0].url;
-    const url2 = event.messageReply.attachments[1].url;
-    if (!url1 || !url2) {
-      api.sendMessage('Hi please reply to a image to swap the face!', event.threadID, event.messageID);
-      return;
-    };
+   if (event.type == "message_reply") {
+
+   if (event.messageReply.attachments.length < 0) return api.sendMessage("💢 No image found.", event.threadID, event.messageID);
+
+   if (event.messageReply.attachments[0].type !== "photo") return api.sendMessage("💢 Only image can be converted.", event.threadID, event.messageID);
+
+   url = event.messageReply.attachments[0].url;
+
+   if (event.messageReply.attachments.lengt > 2) return api.sendMessage("💢 Only 2 image can be converted.", event.threadID, event.messageID);
+
+   url = event.messageReply.attachments[0].url
+   url1 = event.messageReply.attachments[1].url
    
-    const { faceSwap, wait } = Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
-    const result = await faceSwap({ url1, url2 });
-    const swappedImage = wait(result);
+    const generate = await prodia.faceSwap({
     
-    const picPath = '/cache/swapface.jpg'
+      sourceUrl: encodeURI(url),
+    
+      targetUrl: encodeURI(url1),
+    
+    });
+   
+    while (generate.status !== "succeeded" && generate.status !== "failed") {
+      
+    new Promise((resolve) => setTimeout(resolve, 250));
+    
+    const job = await prodia.getJob(generate.job);
+    
+    if (job.status === "succeeded") {
+    
+    let img = (await axios.get(job.imageUrl, { responseType: "arraybuffer" })).data;
+    
+    const picPath = '/cache/swapface.png'
     const paths = path.join(__dirname, picPath);
-    
-    const img = (await axios.get(swappedImage, { responseType: "arraybuffer" }).data;
     
     fs.writeFileSync(paths, Buffer.from(img, "utf-8"));  
     
     api.sendMessage({
-        body: "Swapping Face Success!",
+        body: "🌟 Swapping Face Success!",
         attachment: fs.createReadStream(paths)
       }, threadID, () => fs.unlinkSync(paths), event.threadID, event.messageID);
+       }
+     }
+   } else {
+     return api.sendMessage('Hi please reply to an image! 🖼')
+   }
   } catch(error) {
     api.sendMessage(error, event.threadID, event.messageID);
     console.error(error)
