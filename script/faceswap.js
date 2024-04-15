@@ -1,9 +1,3 @@
-const path = require('path');
-const { Prodia } = require("prodia.js");
-const axios = require('axios');
-const fs = require('fs-extra');
-const prodia = new Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
-
 module.exports.config = {
   name: "faceswap",
   version: "1.0.0",
@@ -18,6 +12,10 @@ module.exports.config = {
 
 module.exports.run = async ({ api, event }) => {
   try {
+    
+    const path = require('path'), { Prodia } = require("prodia.js"), axios = require('axios'), fs = require('fs-extra'), prodia = new Prodia("56df02d2-eecf-4f9d-b9b6-11b68078a14b");
+    
+    let url, url1;
     if (event.type === "message_reply") {
       if (event.messageReply.attachments.length === 0) return api.sendMessage("💢 No image found.", event.threadID, event.messageID);
       
