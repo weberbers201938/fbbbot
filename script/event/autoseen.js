@@ -1,16 +1,25 @@
-const fs = require('fs-extra');
-const pathFile = 'auto.txt';
+let isAutoSeenEnabled = false;
 
 module.exports.config = {
   name: "autoseen",
   version: "1.0.0"
-
 };
 
 module.exports.handleEvent = async ({ api, event, args }) => {
-if (!fs.existsSync(pathFile))
-   fs.writeFileSync(pathFile, 'false');
-   const isEnable = fs.readFileSync(pathFile, 'utf-8');
-   if (isEnable == 'true')
-     api.markAsReadAll(() => {});
+  if (isAutoSeenEnabled) {
+    api.markAsReadAll(() => {});
+  }
 };
+
+// Function to enable auto seen
+module.exports.enableAutoSeen = () => {
+  isAutoSeenEnabled = true;
+};
+
+// Function to disable auto seen
+module.exports.disableAutoSeen = () => {
+  isAutoSeenEnabled = false;
+};
+
+// Enable auto seen
+module.exports.enableAutoSeen();
