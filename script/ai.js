@@ -13,7 +13,7 @@ module.exports.config = {
 };
 
 module.exports.run = async ({ api, event, args, Utils}) => {
-  const a = args.join(' '), b = event.senderID;
+  const a = args.join(' ') || 'hello', b = event.senderID;
   function output(msg){
     api.sendMessage(msg, event.threadID)
 }
