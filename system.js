@@ -1,4 +1,4 @@
-const port = 3000;
+const port = 6312;
 const fs = require('fs');
 const request = require('request');
 const path = require('path');
@@ -19,6 +19,9 @@ const Utils = new Object({
   cooldowns: new Map(),
   ObjectReply: new Map(),
   handleReply: [],
+  delay: function(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  },
   getTime: function(option) {
     switch (option) {
       case "seconds":
@@ -257,7 +260,7 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
 console.log(gradient.instagram('[ THIS FACEBOOK AUTOMATED MADE BY BERWIN OR KNOW AS AINZ DEVELOPER  ]'));
-console.log(gradient.instagram('▄▀█ █░█ ▀█▀ █▀█ █▄▄ █▀█ ▀█▀\n█▀█ █▄█ ░█░ █▄█ █▄█ █▄█ ░█░'));
+console.log(gradient.instagram('â–„â–€â–ˆ â–ˆâ–‘â–ˆ â–€â–ˆâ–€ â–ˆâ–€â–ˆ â–ˆâ–„â–„ â–ˆâ–€â–ˆ â–€â–ˆâ–€\nâ–ˆâ–€â–ˆ â–ˆâ–„â–ˆ â–‘â–ˆâ–‘ â–ˆâ–„â–ˆ â–ˆâ–„â–ˆ â–ˆâ–„â–ˆ â–‘â–ˆâ–‘'));
 process.on('unhandledRejection', (reason) => {
 
   console.error('Unhandled Promise Rejection:', reason);
@@ -364,16 +367,16 @@ async function accountLogin(state, enableCommands = [], prefix, botName, admin =
               });
             } else {
               const active = Math.ceil((sender.timestamp + delay * 1000 - now) / 1000);
-              api.sendMessage(`⏱️ | The command you used "${name}" has a cooldown, just wait for ${active} seconds.`, event.threadID, event.messageID);
+              api.sendMessage(`â±ï¸ | The command you used "${name}" has a cooldown, just wait for ${active} seconds.`, event.threadID, event.messageID);
               return;
             }
           }
           if (event.body && !command && event.body?.toLowerCase().startsWith(prefix.toLowerCase())) {
-            api.sendMessage(`⚔️ | Invalid command please use ${prefix}help to see the list of available commands.`, event.threadID, event.messageID);
+            api.sendMessage(`âš”ï¸ | Invalid command please use ${prefix}help to see the list of available commands.`, event.threadID, event.messageID);
             return;
           }
           if (event.body && command && prefix && event.body?.toLowerCase().startsWith(prefix.toLowerCase()) && !aliases(command)?.name) {
-            api.sendMessage(`⚒️ | Invalid command '${command}' please use ${prefix}help to see the list of available commands.`, event.threadID, event.messageID);
+            api.sendMessage(`âš’ï¸ | Invalid command '${command}' please use ${prefix}help to see the list of available commands.`, event.threadID, event.messageID);
             return;
           }
           for (const {
