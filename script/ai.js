@@ -1,4 +1,5 @@
 const axios = require('axios');
+const fs = require('fs');
 
 module.exports.config = {
   name: "ai",
@@ -13,26 +14,59 @@ module.exports.config = {
 };
 
 module.exports.run = async ({ api, event, args, Utils}) => {
-  const a = args.join(' ') || 'hello', b = event.senderID;
-  function output(msg){
-    api.sendMessage(msg, event.threadID)
-}
-
-  function edit(msg_edit){
-    api.editMessage(msg_edit)
-  }
+  
+  const query = args.join(' ');
+  
+  if (!query) {
+    api.sendMessage('Please use this command correctly: ai<space><sentence>');
+    return;
+  };
   
   try {
-    const api_url = `https://secretdevsxyz.onrender.com/gemini?p=${a}&id=${b}`
-    const c = axios.post(api_url);
-    const d = c.data;
-    const e = d.response;
     
-    const f = await output('🕒 Loading..');
+    var prompt = {
+      prompt: query
+    };
     
-    await Utils.delay(2000);
-    edit(e, f.messageID)
+    var headers = {
+      headers: "Content-Type": " application/json"
+    };
+    
+    const edit = await api.sendMessage('[🕐] Getting response', event.threadID);
+    
+    await Utils.delay(1000);
+    api.editMessage('[🕑] Getting response', edit.messageID);
+    
+    await Utils.delay(1000);
+    api.editMessage('[🕒] Getting response', edit.messageID);
+    
+    await Utils.delay(1000);
+    api.editMessage('[🕓] Getting response', edit.messageID);
+    
+    await Utils.delay(1000);
+    api.editMessage('[🕔] Getting response', edit.messageID);
+    
+    await Utils.delay(1000);
+    api.editMessage('[🕕] Getting response');
+    
+    const api_url = `http://eu4.diresnode.com:3763/gemini`
+    const response = axios.post(api_url, prompt, headers);
+    
+    const response_text = response.data.candidates[0].text;
+    const response_image = response.data.candidates[0].generated_images[0];
+    
+    const imgs = (await axios.get(response_image, { responseType: "arraybuffer" })).data;
+    
+    const paths_image = __dirname + `/cache/generated_images.jpg`;
+    
+    fs.writeFileSync(paths_image, Buffer.from(imgs, 'utf-8'));
+
+    api.sendMessage({
+        body: response_text,
+        attachment: fs.createReadStream(paths_image)
+      }, event.threadID, () => fs.unlinkSync(paths_image), event.messageID);
+    
   } catch(error) {
-    output(error)
+    api.sendMessage(`🚫 Error Processing Response: ${error}`, threadID, messageID);
   }
 };
